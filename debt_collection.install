@@ -1,0 +1,87 @@
+<?php
+
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+
+
+/**
+ * @file
+ * Install, update and uninstall functions for the debt_collection module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function debt_collection_install()
+{
+  try {
+    $field_name = 'owed_amount';
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'user',
+      'type' => 'float'
+    ]);
+
+    $field_storage->save();
+
+    $field = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'bundle' => 'user',
+      'label' => 'Owed amount',
+      'settings' => [
+        'min' => '',
+        'max' => '',
+        'prefix' => '$',
+        'suffix' => ''
+      ],
+      'required' => false
+    ]);
+
+    $field->save();
+
+    \Drupal::messenger()->addMessage('Field created successfully.');
+  } catch (\Exception $e) {
+    \Drupal::messenger()->addError('Error while creating field: ' . $e->getMessage());
+  }
+
+  $entity_form_display = EntityFormDisplay::load('user.user.default');
+
+  if (!$entity_form_display) {
+    $entity_form_display = EntityFormDisplay::create([
+      'targetEntityType' => 'user',
+      'bundle' => 'user',
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+
+  $entity_form_display->setComponent('owed_amount', [
+    'type' => 'number',
+    'settings' => [
+      'placeholder' => '',
+      'step' => 'any',
+    ],
+    'weight' => 5,
+  ])->save();
+}
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function debt_collection_uninstall()
+{
+  $field_name = 'owed_amount';
+  $entity_type = 'user';
+
+  $field = FieldConfig::loadByName($entity_type, 'user', $field_name);
+  if ($field) {
+    $field->delete();
+  }
+
+  $field_storage = FieldStorageConfig::loadByName($entity_type, $field_name);
+  if ($field_storage) {
+    $field_storage->delete();
+  }
+}

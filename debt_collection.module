@@ -1,0 +1,25 @@
+<?php
+
+use Drupal\taxonomy\Entity\Term;
+
+/**
+ * @file
+ * Primary module hooks for debt_collection module.
+ */
+
+function debt_collection_preprocess_page(&$variables) {
+
+  $vocabulary = 'debt_collector';
+  $query = \Drupal::entityQuery('taxonomy_term');
+  $query->condition('vid', $vocabulary)
+    ->accessCheck(True);
+  $tids = $query->execute();
+
+  $terms = Term::loadMultiple($tids);
+  $taxonomy_terms = [];
+
+  foreach ($terms as $term) {
+    $taxonomy_terms[] = $term->getName();
+  }
+//  dump($taxonomy_terms);
+}

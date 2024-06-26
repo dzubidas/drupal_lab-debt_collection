@@ -1,0 +1,8 @@
+name: 'debt_collection'
+type: module
+description: 'Module to choose collection service to collect debt from debter'
+package: Custom
+core_version_requirement: ^10 || ^11
+dependencies:
+  - field:field
+  - user:user

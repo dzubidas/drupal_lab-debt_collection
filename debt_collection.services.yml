@@ -1,0 +1,7 @@
+services:
+  debt_collection.user_load_service:
+    class: Drupal\debt_collection\Services\UserLoadService
+    arguments: ['@entity_type.manager']
+  debt_collection.debt_collection_service:
+    class: Drupal\debt_collection\DebtCollectionService
+    arguments: ['@debt_collection.user_load_service']

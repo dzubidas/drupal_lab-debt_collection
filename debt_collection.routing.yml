@@ -1,0 +1,13 @@
+debt_collection.overview:
+  path: '/user-debt-overview'
+  defaults:
+    _controller: '\Drupal\debt_collection\Controller\DebtCollectionController::content'
+  requirements:
+    _permission: 'access content'
+debt_collection.set_owed_amount:
+  path: '/user-debt-overview'
+  defaults:
+    _form: '\Drupal\debt_collection\Form\SetOwedAmountForm'
+    _title: 'Set owed amount'
+  requirements:
+    _permission: 'access content'
